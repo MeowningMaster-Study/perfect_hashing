@@ -1,4 +1,4 @@
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct HashTableOptions {
     pub a: usize,
     pub b: usize,

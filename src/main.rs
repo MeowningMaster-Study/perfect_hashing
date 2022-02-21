@@ -5,13 +5,18 @@ mod hash_tables;
 use hash_string::hash_string;
 
 fn main() {
-    let albert = String::from("Albert");
-    let inga = String::from("Inga");
-    let data = vec![&albert, &inga];
+    let map = vec![("Dog", "Собака"), ("Cat", "Кот"), ("Manatee", "Ламантин")];
 
-    let hash_table = hash_tables::PrimaryHashTable::new(&data, hash_string).unwrap();
+    let key = hash_string(&"Dog");
+    println!("{}", key);
 
-    let a = hash_table.get(&albert);
-    let b = hash_table.get(&inga);
-    println!("{:?}, {:?}", a, b);
+    let hash_table = hash_tables::PrimaryHashTable::new(&map, hash_string).unwrap();
+
+    let ans = [
+        hash_table.get("Dog"),
+        hash_table.get("Cat"),
+        hash_table.get("Manatee"),
+        hash_table.get("Iguana"),
+    ];
+    println!("{:?}", ans);
 }

@@ -1,44 +1,39 @@
-use super::{gen_b, get_index, options::HashTableOptions, HashFunction, Stored};
+use super::{gen_b, get_index, options::HashTableOptions};
 use std::vec::Vec;
 
-type HashedData<T> = Vec<Option<T>>;
+type HashedData<'a, Value> = Vec<Option<(usize, &'a Value)>>;
 
-fn get_item<T>(hashed_data: &HashedData<T>, options: HashTableOptions, key: usize) -> &Option<T> {
-    &hashed_data[get_index(options, key)]
-}
-
-pub struct SecondaryHashTable<'a> {
+pub struct SecondaryHashTable<'a, Value> {
     pub options: HashTableOptions,
-    pub hashed_data: HashedData<Stored<'a>>,
-    pub hash_func: HashFunction<Stored<'a>>,
+    pub hashed_data: HashedData<'a, Value>,
 }
 
-impl<'a> SecondaryHashTable<'_> {
-    pub fn new(data: &[Stored<'a>], hash_func: HashFunction<Stored<'a>>) -> SecondaryHashTable<'a> {
+impl<'a, Value> SecondaryHashTable<'a, Value> {
+    pub fn new(map: &[(usize, &'a Value)]) -> SecondaryHashTable<'a, Value> {
+        let len = map.len();
         let mut options = HashTableOptions {
             a: 2,
             b: gen_b(),
-            m: data.len().pow(2),
+            m: len.pow(2),
         };
-        let mut hashed_data = vec![None; options.m];
-        let keys = (0..data.len())
-            .map(|i| hash_func(&data[i]))
-            .collect::<Vec<_>>();
+        let mut hashed_data: Vec<Option<(usize, &Value)>> = vec![None; options.m];
+
+        let mut iter = map.iter().enumerate();
 
         loop {
-            let mut iter = keys.iter().enumerate();
-            for (i, key) in iter.by_ref() {
-                let item = get_item(&hashed_data, options, *key);
+            for (i, pair) in iter.by_ref() {
+                let key = pair.0;
+                let index = get_index(options, key);
                 // if place is empty
-                if item.is_none() {
-                    hashed_data[i] = Some(data[i]);
+                if hashed_data[index].is_none() {
+                    hashed_data[index] = Some(map[i]);
                 } else {
                     break;
                 }
             }
 
             // if all keys hashed
-            if iter.next() == None {
+            if iter.next().is_none() {
                 break;
             } else {
                 // try another options
@@ -51,14 +46,21 @@ impl<'a> SecondaryHashTable<'_> {
             }
         }
 
+        println!("secondary hash table options: {:?}", &options);
+
         SecondaryHashTable {
             options,
             hashed_data,
-            hash_func,
         }
     }
 
-    pub fn get(&self, key: usize) -> &Option<Stored<'_>> {
-        get_item(&self.hashed_data, self.options, key)
+    pub fn get(&self, key: usize) -> Option<&Value> {
+        let index = get_index(self.options, key);
+        let pair = self.hashed_data[index];
+        if pair.is_none() || pair.unwrap().0 != key {
+            None
+        } else {
+            Some(pair.unwrap().1)
+        }
     }
 }

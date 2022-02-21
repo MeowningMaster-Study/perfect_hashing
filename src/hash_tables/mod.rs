@@ -10,12 +10,11 @@ use rand::Rng;
 
 pub use primary::PrimaryHashTable;
 
-pub type Stored<'a> = &'a String;
-pub type HashFunction<T> = fn(T) -> usize;
-
-pub fn get_index(options: HashTableOptions, key: usize) -> usize {
-    ((Wrapping(options.a) * Wrapping(key) + Wrapping(options.b)) % globals::P % Wrapping(options.m))
-        .0
+pub fn get_index(options: HashTableOptions, hash: usize) -> usize {
+    let ans = (Wrapping(options.a) * Wrapping(hash) + Wrapping(options.b))
+        % globals::P
+        % Wrapping(options.m);
+    ans.0
 }
 
 pub fn gen_b() -> usize {
