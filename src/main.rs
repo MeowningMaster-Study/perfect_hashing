@@ -7,9 +7,6 @@ use hash_string::hash_string;
 fn main() {
     let map = vec![("Dog", "Собака"), ("Cat", "Кот"), ("Manatee", "Ламантин")];
 
-    let key = hash_string(&"Dog");
-    println!("{}", key);
-
     let hash_table = hash_tables::PrimaryHashTable::new(&map, hash_string).unwrap();
 
     let ans = [
