@@ -55,6 +55,9 @@ impl<'a, Value> SecondaryHashTable<'a, Value> {
     }
 
     pub fn get(&self, key: usize) -> Option<&Value> {
+        if self.options.m == 0 {
+            return None;
+        }
         let index = get_index(self.options, key);
         let pair = self.hashed_data[index];
         if pair.is_none() || pair.unwrap().0 != key {
