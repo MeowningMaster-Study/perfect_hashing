@@ -1,1 +1,3 @@
-pub const P: usize = 4294967291;
+use std::num::Wrapping;
+
+pub const P: Wrapping<usize> = Wrapping(4294967291);

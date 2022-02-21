@@ -1,14 +1,15 @@
 use super::globals::P;
 use ascii::AsciiChar;
-const CHARSET_LEN: usize = 255;
+use std::num::Wrapping;
+const CHARSET_LEN: Wrapping<usize> = Wrapping(255);
 
 pub fn hash_string(s: &String) -> usize {
-    let mut hash: usize = 0;
-    let mut pow: usize = 1;
+    let mut hash: Wrapping<usize> = Wrapping(0);
+    let mut pow: Wrapping<usize> = Wrapping(1);
     s.chars().for_each(|ch| {
         let ascii_char = AsciiChar::from_ascii(ch).unwrap();
-        hash = (hash + ascii_char.as_byte() as usize * pow) % P;
+        hash = (hash + Wrapping::<usize>(ascii_char.as_byte().into()) * pow) % P;
         pow = (pow * CHARSET_LEN) % P;
     });
-    return hash;
+    return hash.0;
 }
