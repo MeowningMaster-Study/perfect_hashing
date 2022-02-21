@@ -5,7 +5,12 @@ mod hash_tables;
 use hash_string::hash_string;
 
 fn main() {
-    let map = vec![("Dog", "Собака"), ("Cat", "Кот"), ("Manatee", "Ламантин")];
+    let map = vec![
+        ("Lion", "Лев"),
+        ("Dog", "Собака"),
+        ("Cat", "Кот"),
+        ("Manatee", "Ламантин"),
+    ];
 
     let hash_table = hash_tables::PrimaryHashTable::new(&map, hash_string).unwrap();
 
