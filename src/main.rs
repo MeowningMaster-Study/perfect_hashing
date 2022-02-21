@@ -8,6 +8,10 @@ fn main() {
     let albert = String::from("Albert");
     let inga = String::from("Inga");
     let data = vec![&albert, &inga];
-    let sc_ht = hash_tables::secondary::SecondaryHashTable::new(&data, hash_string);
-    println!("{:?}", &sc_ht.hashed_data);
+
+    let hash_table = hash_tables::PrimaryHashTable::new(&data, hash_string).unwrap();
+
+    let a = hash_table.get(&albert);
+    let b = hash_table.get(&inga);
+    println!("{:?}, {:?}", a, b);
 }

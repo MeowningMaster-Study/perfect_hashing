@@ -9,6 +9,7 @@ authors = ["meowning_master"]
 [dependencies]
 ascii = "1.0.0"
 rand = "0.8.4"
+itertools = "0.10.3"
 
 [[bin]]
 name = "lab1_rs"

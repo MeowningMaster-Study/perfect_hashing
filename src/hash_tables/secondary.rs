@@ -1,15 +1,7 @@
-use super::globals::P;
-use super::options::HashTableOptions;
-use super::HashFunction;
-use rand::Rng;
+use super::{gen_b, get_index, options::HashTableOptions, HashFunction, Stored};
 use std::vec::Vec;
 
-type T<'a> = &'a String;
 type HashedData<T> = Vec<Option<T>>;
-
-fn get_index(options: HashTableOptions, key: usize) -> usize {
-    ((options.a * key + options.b) % P) % options.m
-}
 
 fn get_item<T>(hashed_data: &HashedData<T>, options: HashTableOptions, key: usize) -> &Option<T> {
     &hashed_data[get_index(options, key)]
@@ -17,17 +9,12 @@ fn get_item<T>(hashed_data: &HashedData<T>, options: HashTableOptions, key: usiz
 
 pub struct SecondaryHashTable<'a> {
     pub options: HashTableOptions,
-    pub hashed_data: HashedData<T<'a>>,
-    pub hash_func: HashFunction<T<'a>>,
-}
-
-fn gen_b() -> usize {
-    let mut rng = rand::thread_rng();
-    rng.gen_range((P / 10)..P)
+    pub hashed_data: HashedData<Stored<'a>>,
+    pub hash_func: HashFunction<Stored<'a>>,
 }
 
 impl<'a> SecondaryHashTable<'_> {
-    pub fn new(data: &[T<'a>], hash_func: HashFunction<T<'a>>) -> SecondaryHashTable<'a> {
+    pub fn new(data: &[Stored<'a>], hash_func: HashFunction<Stored<'a>>) -> SecondaryHashTable<'a> {
         let mut options = HashTableOptions {
             a: 2,
             b: gen_b(),
@@ -69,5 +56,9 @@ impl<'a> SecondaryHashTable<'_> {
             hashed_data,
             hash_func,
         }
+    }
+
+    pub fn get(&self, key: usize) -> &Option<Stored<'_>> {
+        get_item(&self.hashed_data, self.options, key)
     }
 }
